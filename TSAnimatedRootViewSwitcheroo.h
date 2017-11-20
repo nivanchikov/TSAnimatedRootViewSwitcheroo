@@ -22,6 +22,7 @@ typedef NS_ENUM(NSUInteger, TSSwitcherooAnimationDirection) {
 
 - (id)initWithRoot:(UIViewController *)root andDelegate:(id<TSAnimatedRootViewSwitcherooDelegate>)delegate;
 - (void)switchToRoot:(UIViewController *)root direction:(TSSwitcherooAnimationDirection)direction;
+- (void)switchToRoot:(UIViewController *)root direction:(TSSwitcherooAnimationDirection)direction completion: (void(^)(BOOL finished)) completion;
 
 @end
 

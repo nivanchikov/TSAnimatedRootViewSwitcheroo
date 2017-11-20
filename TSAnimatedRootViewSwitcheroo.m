@@ -60,7 +60,7 @@ __strong static TSAnimatedRootViewSwitcheroo *sharedContainer;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self _switchToRoot:self.root direction:TSSwitcherooAnimationDirectionForward];
+    [self _switchToRoot:self.root direction:TSSwitcherooAnimationDirectionForward completion: nil];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -76,8 +76,13 @@ __strong static TSAnimatedRootViewSwitcheroo *sharedContainer;
 }
 
 - (void)switchToRoot:(UIViewController *)root direction:(TSSwitcherooAnimationDirection)direction {
+	[self switchToRoot: root direction: direction completion: nil];
+}
+	
+- (void)switchToRoot:(UIViewController *)root direction:(TSSwitcherooAnimationDirection)direction completion: (void(^)(BOOL finished)) completion
+{
     NSParameterAssert (root);
-    [self _switchToRoot:root direction:(TSSwitcherooAnimationDirection)direction];
+    [self _switchToRoot:root direction:(TSSwitcherooAnimationDirection)direction completion: completion];
     self.root = root;
 }
 
@@ -112,9 +117,12 @@ __strong static TSAnimatedRootViewSwitcheroo *sharedContainer;
     return nil;
 }
 
-- (void)_switchToRoot:(UIViewController *)toViewController direction:(TSSwitcherooAnimationDirection)direction {
+- (void)_switchToRoot:(UIViewController *)toViewController direction:(TSSwitcherooAnimationDirection)direction completion: (void(^)(BOOL finished)) completion {
 
   if (![self shouldSwitchToViewController:toViewController]) {
+	  if (completion) {
+		  completion(NO);
+	  }
     return;
   }
 
@@ -138,6 +146,10 @@ __strong static TSAnimatedRootViewSwitcheroo *sharedContainer;
     if ([animator respondsToSelector:@selector (animationEnded:)]) {
       [animator animationEnded:didComplete];
     }
+	  
+	  if (completion) {
+		  completion(didComplete);
+	  };
   };
 
   if (animator) {
